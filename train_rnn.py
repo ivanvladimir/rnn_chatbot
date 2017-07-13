@@ -225,7 +225,7 @@ if __name__ == '__main__':
 
     print('Number of exemples = %d'%(len(train)))
     num_subsets=1
-    step = np.around(len(train)/num_subsets)
+    step = np.around(len(train_msg)/num_subsets)
     round_exem = step * num_subsets
 
     x = range(0,opts.epochs) 
