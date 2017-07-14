@@ -251,45 +251,43 @@ if __name__ == '__main__':
         
     # Entrenamiento
     for m in range(opts.epochs):
-	for n in range(0,round_exem,step):
-	    
-	    q2 = train_msg[n:n+step]
-	    s = q2.shape
-	    count = 0
-	    for i, sent in enumerate(train_ans[n:n+step]):
-		l = np.where(sent==EOS)
-		limit = l[0][0]
-		count += limit + 1
-	    Q = np.zeros((count,opts.maxlen_input))
-	    A = np.zeros((count,opts.maxlen_input))
-	    Y = np.zeros((count,dictionary_size))
-	    
-	    # Loop over the training examples:
-	    count = 0
-	    for i, sent in enumerate(train_ans[n:n+step]):
-		ans_partial = np.zeros((1,opts.maxlen_input))
-		
-		# Loop over the positions of the current target output (the current output sequence):
-		l = np.where(sent==EOS)  #  the position of the symbol EOS
-		limit = l[0][0]
+        for n in range(0,round_exem,step):
+            q2 = train_msg[n:n+step]
+            s = q2.shape
+            count = 0
+            for i, sent in enumerate(train_ans[n:n+step]):
+                l = np.where(sent==EOS)
+                limit = l[0][0]
+                count += limit + 1
+            Q = np.zeros((count,opts.maxlen_input))
+            A = np.zeros((count,opts.maxlen_input))
+            Y = np.zeros((count,dictionary_size))
+            
+            # Loop over the training examples:
+            count = 0
+            for i, sent in enumerate(train_ans[n:n+step]):
+                ans_partial = np.zeros((1,opts.maxlen_input))
+                # Loop over the positions of the current target output (the current output sequence):
+                l = np.where(sent==EOS)  #  the position of the symbol EOS
+                limit = l[0][0]
 
-		for k in range(1,limit+1):
-		    # Mapping the target output (the next output word) for one-hot codding:
-		    y = np.zeros((1, dictionary_size))
-		    y[0, sent[k]] = 1
+                for k in range(1,limit+1):
+                    # Mapping the target output (the next output word) for one-hot codding:
+                    y = np.zeros((1, dictionary_size))
+                    y[0, sent[k]] = 1
 
-		    # preparing the partial answer to input:
-		    ans_partial[0,:k] = sent[0:k]
-		    # training the model for one epoch using teacher forcing:
-		    
-		    Q[count, :] = q2[i:i+1] 
-		    A[count, :] = ans_partial 
-		    Y[count, :] = y
+                    # preparing the partial answer to input:
+                    ans_partial[0,:k] = sent[0:k]
+                    # training the model for one epoch using teacher forcing:
+
+                    Q[count, :] = q2[i:i+1] 
+                    A[count, :] = ans_partial 
+                    Y[count, :] = y
                     #print(q2[i:i+1],ans_partial)
-		    count += 1
-		    
-	    print('Training epoch: %d, training examples: %d - %d'%(m,n, n + step))
-	    model.fit([Q, A], Y, batch_size=100, epochs=1)
+                    count += 1
+
+            print('Training epoch: %d, training examples: %d - %d'%(m,n, n + step))
+            model.fit([Q, A], Y, batch_size=100, epochs=1)
         
             res=print_result(train_msg[0:1],model,i2w,opts.maxlen_input)
             print(res)
