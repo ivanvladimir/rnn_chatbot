@@ -279,11 +279,9 @@ if __name__ == '__main__':
                     # preparing the partial answer to input:
                     ans_partial[0,:k] = sent[0:k]
                     # training the model for one epoch using teacher forcing:
-
                     Q[count, :] = q2[i:i+1] 
                     A[count, :] = ans_partial 
                     Y[count, :] = y
-                    #print(q2[i:i+1],ans_partial)
                     count += 1
 
             print('Training epoch: %d, training examples: %d - %d'%(m,n, n + step))
